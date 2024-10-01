@@ -1,101 +1,144 @@
-import Image from "next/image";
+"use client";
+import Link from "next/link";
+import { useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ReactLenis } from "lenis/react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    const ScrollTriggerSettings = {
+      trigger: ".main",
+      start: "top 25%",
+      toggleActions: "play reverse play reverse",
+    };
+
+    const leftXValues = [-800, -900, -400];
+    const rightXValues = [800, 900, 400];
+    const leftRotationValues = [-30, -20, -35];
+    const rightRotationValues = [30, 20, 35];
+    const yValues = [100, -150, -400];
+
+    gsap.utils.toArray(".row").forEach((row, index) => {
+      const cardLeft = row.querySelector(".card-left");
+      const cardRight = row.querySelector(".card-right");
+
+      gsap.to(cardLeft, {
+        x: leftXValues[index],
+        y: yValues[index],
+        rotation: leftRotationValues[index],
+        scrollTrigger: {
+          trigger: ".main",
+          start: "top center",
+          end: "150% bottom",
+          scrub: true,
+        },
+      });
+
+      gsap.to(cardRight, {
+        x: rightXValues[index],
+        y: yValues[index],
+        rotation: rightRotationValues[index],
+        scrollTrigger: {
+          trigger: ".main",
+          start: "top center",
+          end: "150% bottom",
+          scrub: true,
+        },
+      });
+    });
+
+    gsap.to(".logo", {
+      scale: 1.2,
+      opacity: 1,
+      duration: 0.8,
+      ease: "power1.out",
+      scrollTrigger: {
+        trigger: ".main",
+        start: "top 50%",
+        end: "bottom 20%",
+        scrub: true,
+      },
+    });
+
+    gsap.to(".line p", {
+      y: 0,
+      stagger: 0.1,
+      duration: 0.5,
+      ease: "power1.out",
+      scrollTrigger: ScrollTriggerSettings,
+    });
+
+    gsap.to(".button", {
+      y: 0,
+      opacity: 1,
+      delay: 0.25,
+      duration: 0.5,
+      ease: "power1.out",
+      scrollTrigger: ScrollTriggerSettings,
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
+  const generateRows = () => {
+    const rows = [];
+    for (let i = 1; i <= 3; i++) {
+      rows.push(
+        <div className="row" key={i}>
+          <div className="card card-left">
+            <img src={`/img-${2 * i - 1}.webp`} alt={`left card ${i}`} />
+          </div>
+          <div className="card card-right">
+            <img src={`/img-${2 * i}.webp`} alt={`right card ${i}`} />
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      );
+    }
+    return rows;
+  };
+
+  return (
+    <>
+      <ReactLenis root>
+        <section className="hero">
+          <div className="img">
+            <img src="/pro-logo.jpg" alt="Pro Logo"></img>
+          </div>
+        </section>
+        <section className="main">
+          <div className="main-content">
+            <div
+              className="logo"
+              style={{ opacity: 0, transform: "scale(0.8)" }}
+            >
+              <img src="/logo.png" alt="Main Logo" />
+            </div>
+
+            <div className="copy">
+              <div className="line">
+                <p>Kami ada</p>
+              </div>
+              <div className="line">
+                <p>Dan terus</p>
+              </div>
+              <div className="line">
+                <p>Berlipat Ganda</p>
+              </div>
+            </div>
+
+            <div className="btn">
+              <button>Get Pro</button>
+            </div>
+          </div>
+
+          {generateRows()}
+        </section>
+      </ReactLenis>
+    </>
   );
 }
